@@ -10,8 +10,9 @@ public class PlayerMove : MonoBehaviour
     float yVelocity = 0;
 
     public float jumpPower = 10f;
+    public bool isJumping = false;
 
-    private void Start()
+    void Start()
     {
         cc = GetComponent<CharacterController>();
     }
@@ -26,17 +27,27 @@ public class PlayerMove : MonoBehaviour
 
         dir = Camera.main.transform.TransformDirection(dir);
 
-        yVelocity += gravity * Time.deltaTime;
-        dir.y = yVelocity;
-        cc.Move(dir * moveSpeed * Time.deltaTime);
+        if (isJumping && cc.collisionFlags == CollisionFlags.Below)
+        {
+            isJumping = false;
+            yVelocity = 0;
+        }
 
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") && !isJumping)
         {
             yVelocity = jumpPower;
+            isJumping = true;
         }
+             
+        if (Input.GetButtonDown("Jump") && !isJumping)
+        {
+            yVelocity = jumpPower;
+            isJumping = true;
+        }
+        
         yVelocity += gravity * Time.deltaTime;
         dir.y = yVelocity;
+
         cc.Move(dir * moveSpeed * Time.deltaTime);
-     
     }
 }
